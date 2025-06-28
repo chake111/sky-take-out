@@ -71,6 +71,13 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 新增员工\n
+     * 注意：这里的@RequestBody注解，是指请求体中的json数据，不是指请求参数中的json数据。
+     *
+     * @param employeeDTO
+     * @return Result<>Employee</>
+     */
     @PostMapping
     public Result<Employee> employee(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工：{}", employeeDTO);
@@ -78,10 +85,29 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 分页查询员工
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
-    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("分页查询员工：{}", employeePageQueryDTO);
         PageResult pageResult = employeeService.page(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 更新员工状态
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result updateStatus(@PathVariable Integer status, Long id) {
+        log.info("更新员工状态：{}，id：{}", status, id);
+        employeeService.updateStatus(status, id);
+        return Result.success();
+    }
+
 }
