@@ -35,8 +35,7 @@ public class AutoFillAspect {
      * 自动填充切入点
      */
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
-    public void autoFillPointcut() {
-    }
+    public void autoFillPointcut() {}
 
     /**
      * 前置通知
@@ -67,20 +66,20 @@ public class AutoFillAspect {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
 
-            if (operationType == OperationType.INSERT) {
-                try {
-                    Method setUpdateTime = entity.getClass().getMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-                    Method setUpdateUser = entity.getClass().getMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
-                    Method setCreateTime = entity.getClass().getMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                    Method setCreateUser = entity.getClass().getMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
-                    setUpdateTime.invoke(entity, now());
-                    setUpdateUser.invoke(entity, getCurrentId());
-                    setCreateTime.invoke(entity, now());
-                    setCreateUser.invoke(entity, getCurrentId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (operationType == OperationType.INSERT) {
+            try {
+                Method setUpdateTime = entity.getClass().getMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
+                Method setUpdateUser = entity.getClass().getMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
+                Method setCreateTime = entity.getClass().getMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
+                Method setCreateUser = entity.getClass().getMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
+                setUpdateTime.invoke(entity, now());
+                setUpdateUser.invoke(entity, getCurrentId());
+                setCreateTime.invoke(entity, now());
+                setCreateUser.invoke(entity, getCurrentId());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
