@@ -22,14 +22,21 @@ public interface DishFlavorMapper {
 
     /**
      * 根据id批量删除口味
-     * @param ids
+     * @param dishIds
      * @return
      */
-    void deleteBatch(List<Long> ids);
+    void deleteBatch(List<Long> dishIds);
 
     /**
      * 批量插入口味
      * @param flavors
      */
     void insertBatch(List<DishFlavor> flavors);
+
+    /**
+     * 根据菜品id查询口味
+     * @param dishId
+     * @return
+     */
+    List<DishFlavor> getByDishId(Long dishId);
 }
