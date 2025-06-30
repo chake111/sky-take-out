@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,14 +72,15 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 分页查询菜品
+     *
      * @param dishPageQueryDTO
      * @return
      */
     @Override
-    public PageResult page(DishPageQueryDTO dishPageQueryDTO) {
+    public PageResult<DishVO> page(DishPageQueryDTO dishPageQueryDTO) {
         PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
         Page<DishVO> page = dishMapper.page(dishPageQueryDTO);
-        return new PageResult(page.getTotal(), page.getResult());
+        return new PageResult<DishVO>(page.getTotal(), page.getResult());
     }
 
     /**
@@ -139,5 +139,19 @@ public class DishServiceImpl implements DishService {
             });
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    /**
+     * 更新菜品状态
+     * @param status
+     * @param id
+     */
+    @Override
+    public void updateStatus(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
     }
 }

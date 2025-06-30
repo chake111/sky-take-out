@@ -93,7 +93,7 @@ public class EmployeeController {
     @GetMapping("/page")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("分页查询员工：{}", employeePageQueryDTO);
-        PageResult pageResult = employeeService.page(employeePageQueryDTO);
+        PageResult<Employee> pageResult = employeeService.page(employeePageQueryDTO);
         return Result.success(pageResult);
     }
 

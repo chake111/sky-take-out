@@ -1,10 +1,22 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Setmeal;
+import com.sky.result.PageResult;
+import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface SetmealMapper {
+
+    /**
+     * 分页查询套餐列表
+     * @param setmealPageQueryDTO
+     * @return
+     */
+     Page<SetmealVO> page(SetmealPageQueryDTO setmealPageQueryDTO);
 
     /**
      * 根据分类id查询套餐的数量

@@ -23,10 +23,11 @@ public interface EmployeeService {
 
     /**
      * 分页查询员工信息
+     *
      * @param employeePageQueryDTO
      * @return
      */
-    PageResult page(EmployeePageQueryDTO employeePageQueryDTO);
+    PageResult<Employee> page(EmployeePageQueryDTO employeePageQueryDTO);
 
     /**
      * 更新员工状态   0-正常，1-禁用
