@@ -20,5 +20,16 @@ import java.util.List;
 @Mapper
 public interface DishFlavorMapper {
 
+    /**
+     * 根据id批量删除口味
+     * @param ids
+     * @return
+     */
+    void deleteBatch(List<Long> ids);
+
+    /**
+     * 批量插入口味
+     * @param flavors
+     */
     void insertBatch(List<DishFlavor> flavors);
 }
