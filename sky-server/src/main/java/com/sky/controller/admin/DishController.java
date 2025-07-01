@@ -107,4 +107,11 @@ public class DishController {
         dishService.updateStatus(status, id);
         return Result.success();
     }
+
+    @GetMapping("/list")
+    public Result<List<DishVO>> list(@RequestParam Long categoryId) {
+        log.info("根据id查询菜品：{}", categoryId);
+        List<DishVO> dishVOList = dishService.list(categoryId);
+        return Result.success(dishVOList);
+    }
 }
