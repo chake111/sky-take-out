@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author chake
  */ /*
@@ -80,6 +82,26 @@ public class SetmealController {
     public Result updateStatus(Long id, @PathVariable Integer status) {
         log.info("更新套餐状态：{},{}", id, status);
         setmealService.updateStatus(id, status);
+        return Result.success();
+    }
+
+    /**
+     * 更新套餐
+     *
+     * @param SetmealDTO
+     * @return
+     */
+    @PutMapping
+    public Result update(@RequestBody SetmealDTO SetmealDTO) {
+        log.info("更新套餐：{}", SetmealDTO);
+        setmealService.update(SetmealDTO);
+        return Result.success();
+    }
+
+    @DeleteMapping
+    public Result delete(@RequestParam List<Long> ids) {
+        log.info("批量删除套餐：{}", ids);
+        setmealService.delete(ids);
         return Result.success();
     }
 }

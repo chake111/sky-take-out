@@ -8,6 +8,8 @@ import com.sky.enumeration.OperationType;
 import com.sky.result.PageResult;
 import com.sky.vo.SetmealVO;
 
+import java.util.List;
+
 /**
  * @author chake
  */ /*
@@ -21,6 +23,7 @@ import com.sky.vo.SetmealVO;
 public interface SetmealService {
     /**
      * 分页查询套餐信息
+     *
      * @param setmealPageQueryDTO
      * @return
      */
@@ -28,6 +31,7 @@ public interface SetmealService {
 
     /**
      * 根据id获取套餐信息
+     *
      * @param id
      * @return
      */
@@ -35,14 +39,31 @@ public interface SetmealService {
 
     /**
      * 保存套餐信息
+     *
      * @param setmealDTO
      */
     void save(SetmealDTO setmealDTO);
 
     /**
      * 更新套餐状态
+     *
      * @param id
      * @param status
      */
     void updateStatus(Long id, Integer status);
+
+    /**
+     * 更新套餐信息
+     *
+     * @param setmealDTO
+     */
+    void update(SetmealDTO setmealDTO);
+
+    /**
+     * 删除套餐信息
+     *
+     * @param ids
+     * @return void
+     */
+    void delete(List<Long> ids);
 }
