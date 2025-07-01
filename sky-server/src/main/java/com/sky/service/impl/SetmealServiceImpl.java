@@ -84,4 +84,20 @@ public class SetmealServiceImpl implements SetmealService {
         });
         setmealDishMapper.insertBatch(setmealDishes);
     }
+
+    /**
+     * 更新套餐状态
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        Setmeal setmeal = Setmeal
+                .builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.updateStatus(setmeal);
+    }
 }

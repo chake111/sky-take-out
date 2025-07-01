@@ -9,6 +9,7 @@ import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -31,11 +32,12 @@ public class SetmealController {
 
     /**
      * 分页查询套餐
+     *
      * @param setmealPageQueryDTO
      * @return
      */
     @GetMapping("/page")
-    public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO){
+    public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
         log.info("分页查询套餐：{}", setmealPageQueryDTO);
         PageResult<SetmealVO> setmeals = setmealService.page(setmealPageQueryDTO);
         return Result.success(setmeals);
@@ -43,11 +45,12 @@ public class SetmealController {
 
     /**
      * 根据id查询套餐
+     *
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public Result<SetmealVO> getbyId(@PathVariable Long id){
+    public Result<SetmealVO> getbyId(@PathVariable Long id) {
         log.info("查询套餐：{}", id);
         SetmealVO setmealVO = setmealService.getbyId(id);
         return Result.success(setmealVO);
@@ -55,13 +58,28 @@ public class SetmealController {
 
     /**
      * 新增套餐
+     *
      * @param setmealDTO
      * @return
      */
     @PostMapping
-    public Result save(@RequestBody SetmealDTO setmealDTO){
+    public Result save(@RequestBody SetmealDTO setmealDTO) {
         log.info("新增套餐：{}", setmealDTO);
         setmealService.save(setmealDTO);
+        return Result.success();
+    }
+
+    /**
+     * 更新套餐状态
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public Result updateStatus(Long id, @PathVariable Integer status) {
+        log.info("更新套餐状态：{},{}", id, status);
+        setmealService.updateStatus(id, status);
         return Result.success();
     }
 }

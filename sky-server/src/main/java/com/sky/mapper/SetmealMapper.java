@@ -61,4 +61,11 @@ public interface SetmealMapper {
     @AutoFill(value = OperationType.INSERT)
     void insert(Setmeal setmeal);
 
+    /**
+     * 更新套餐状态
+     *
+     * @param setmeal
+     */
+    @AutoFill(OperationType.UPDATE)
+    void updateStatus(Setmeal setmeal);
 }

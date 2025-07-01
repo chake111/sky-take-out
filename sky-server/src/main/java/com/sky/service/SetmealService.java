@@ -1,8 +1,10 @@
 package com.sky.service;
 
+import com.sky.annotation.AutoFill;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
+import com.sky.enumeration.OperationType;
 import com.sky.result.PageResult;
 import com.sky.vo.SetmealVO;
 
@@ -36,4 +38,11 @@ public interface SetmealService {
      * @param setmealDTO
      */
     void save(SetmealDTO setmealDTO);
+
+    /**
+     * 更新套餐状态
+     * @param id
+     * @param status
+     */
+    void updateStatus(Long id, Integer status);
 }
