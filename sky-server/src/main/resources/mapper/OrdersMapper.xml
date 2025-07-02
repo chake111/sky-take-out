@@ -10,6 +10,7 @@
             <if test="cancelReason != null and cancelReason != ''">cancel_reason = #{cancelReason},</if>
             <if test="payStatus != null">pay_status = #{payStatus},</if>
             <if test="amount != null">amount = #{amount},</if>
+            <if test="rejectionReason != null and rejectionReason != ''">rejection_reason = #{rejectionReason},</if>
         </set>
         where id = #{id}
     </delete>
