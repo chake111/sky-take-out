@@ -4,6 +4,7 @@ import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -21,8 +22,33 @@ import java.util.List;
 public interface OrdersMapper {
     /**
      * 分页查询订单
+     *
      * @param ordersPageQueryDTO
      * @return
      */
     List<Orders> list(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 根据id查询订单
+     *
+     * @param id
+     * @return
+     */
+    OrderVO getById(Long id);
+
+    /**
+     * 取消订单
+     *
+     * @param orders
+     * @return
+     */
+    void update(Orders orders);
+
+    /**
+     * 统计订单数量
+     *
+     * @return
+     */
+    @Select("select count(*) from orders where status = #{status}")
+    Integer statistics(Integer status);
 }
