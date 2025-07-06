@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -9,9 +10,11 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author chake
@@ -31,6 +34,9 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 新增菜品
      *
@@ -41,6 +47,8 @@ public class DishController {
     public Result saveWithFlavor(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanCache(key);
         return Result.success();
     }
 
@@ -67,6 +75,7 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除菜品：{}", ids);
         dishService.delete(ids);
+        cleanCache("*dish_*");
         return Result.success();
     }
 
@@ -85,6 +94,7 @@ public class DishController {
 
     /**
      * 更新菜品
+     *
      * @param dishDTO
      * @return
      */
@@ -92,11 +102,13 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("更新菜品：{}", dishDTO);
         dishService.update(dishDTO);
+        cleanCache("*dish_*");
         return Result.success();
     }
 
     /**
      * 更新菜品状态
+     *
      * @param status
      * @param id
      * @return
@@ -105,13 +117,22 @@ public class DishController {
     public Result updateStatus(@PathVariable Integer status, Long id) {
         log.info("更新菜品状态：{}，{}", id, status);
         dishService.updateStatus(status, id);
+        cleanCache("*dish_*");
         return Result.success();
     }
 
     @GetMapping("/list")
     public Result<List<DishVO>> list(@RequestParam Long categoryId) {
         log.info("根据id查询菜品：{}", categoryId);
-        List<DishVO> dishVOList = dishService.list(categoryId);
+        Dish dish = new Dish();
+        dish.setCategoryId(categoryId);
+        List<DishVO> dishVOList = dishService.list(dish);
         return Result.success(dishVOList);
+    }
+
+    private void cleanCache(String pattern) {
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
+        log.info("缓存清理");
     }
 }
