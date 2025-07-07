@@ -1,13 +1,11 @@
 package com.sky.service;
 
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
+import com.sky.dto.*;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.vo.OrderStatisticsVO;
+import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 
 import java.util.List;
@@ -82,4 +80,12 @@ public interface OrdersService {
      * @param id
      */
     void complete(Long id);
+
+    /**
+     * 用户下单
+     *
+     * @param ordersSubmitDTO
+     * @return
+     */
+    OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO);
 }

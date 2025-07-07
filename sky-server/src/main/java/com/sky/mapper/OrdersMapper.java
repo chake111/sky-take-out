@@ -51,4 +51,10 @@ public interface OrdersMapper {
      */
     @Select("select count(*) from orders where status = #{status}")
     Integer statistics(Integer status);
+
+    /**
+     *  新增订单
+     * @param orders
+     */
+    void insert(Orders orders);
 }

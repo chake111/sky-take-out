@@ -5,6 +5,7 @@ import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -24,4 +25,10 @@ public interface OrderDetailMapper {
      */
     @Select("select * from order_detail where order_id = #{orderId}")
     List<OrderDetail> listByOrderId(Long orderId);
+
+    /**
+     * 批量插入订单明细
+     * @param orderDetailList
+     */
+    void insertBatch(ArrayList<OrderDetail> orderDetailList);
 }

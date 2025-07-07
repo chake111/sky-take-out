@@ -23,7 +23,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Slf4j
-@RestController
+@RestController("adminOrderController")
 @RequestMapping("/admin/order")
 public class OrderController {
 
