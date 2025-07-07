@@ -1,0 +1,20 @@
+package com.sky.service;
+
+import com.sky.dto.ShoppingCartDTO;
+
+/*
+ * ClassName: ShoppingCartService
+ * Package: com.sky.service
+ * Description:
+ * @Author: chake
+ * @Create 2025/7/7 10:18
+ * @Version 1.0
+ */
+public interface ShoppingCartService {
+    /**
+     * 添加购物车
+     * @param shoppingCartDTO
+     * @return
+     */
+    void addShoppingCart(ShoppingCartDTO shoppingCartDTO);
+}
