@@ -206,12 +206,19 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public void complete(Long id) {
+        Orders ordersDB = ordersMapper.getById(id);
+
+        if (ordersDB == null || !ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
         Orders orders = Orders
                 .builder()
                 .id(id)
                 .status(Orders.COMPLETED)
                 .deliveryTime(LocalDateTime.now())
                 .build();
+
         ordersMapper.update(orders);
     }
 
@@ -367,5 +374,27 @@ public class OrdersServiceImpl implements OrdersService {
         }).collect(Collectors.toList());//Collectors.toList()来收集Stream中映射后的所有ShoppingCart对象到一个新的列表中
         //将购物车对象批量添加到数据库
         shoppingCartMapper.insertBatch(shoppingCartList);
+    }
+
+    /**
+     * 订单催促
+     *
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        Orders ordersDB = ordersMapper.getById(id);
+
+        if (ordersDB == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 2);
+        map.put("id", id);
+        map.put("content", "订单号：" + ordersDB.getNumber());
+        String json = JSON.toJSONString(map);
+
+        webSocketServer.sendToAllClient(json);
     }
 }
