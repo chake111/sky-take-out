@@ -39,4 +39,5 @@ public interface OrderDetailMapper {
      */
     @Select("select * from order_detail where id = #{id}")
     OrderDetail getById(Long id);
+
 }

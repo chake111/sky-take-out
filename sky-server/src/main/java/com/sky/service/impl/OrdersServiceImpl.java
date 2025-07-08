@@ -71,12 +71,30 @@ public class OrdersServiceImpl implements OrdersService {
      * @return
      */
     @Override
-    public PageResult<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO) {
+    public PageResult<OrderVO> page(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        List<OrderVO> orderVOList = ordersMapper.list(ordersPageQueryDTO);
+        orderVOList.forEach(orderVO -> {
+            List<OrderDetail> orderDetailList = orderDetailMapper.listByOrderId(orderVO.getId());
+            String orderDishes = orderDetailList.toString();
+            orderVO.setOrderDishes(orderDishes);
+        });
+        Page<OrderVO> page = (Page<OrderVO>) orderVOList;
+        return new PageResult(page.getTotal(), page.getResult());
+    }
+    /**
+     * 分页查询订单
+     *
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult<Orders> pageWithUserId(OrdersPageQueryDTO ordersPageQueryDTO) {
         Long userId = BaseContext.getCurrentId();
         ordersPageQueryDTO.setUserId(userId);
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
-        List<Orders> ordersList = ordersMapper.list(ordersPageQueryDTO);
-        Page<Orders> page = (Page<Orders>) ordersList;
+        List<OrderVO> ordersList = ordersMapper.list(ordersPageQueryDTO);
+        Page<OrderVO> page = (Page<OrderVO>) ordersList;
         return new PageResult(page.getTotal(), page.getResult());
     }
 
@@ -185,6 +203,7 @@ public class OrdersServiceImpl implements OrdersService {
                 .builder()
                 .id(id)
                 .status(Orders.COMPLETED)
+                .deliveryTime(LocalDateTime.now())
                 .build();
         ordersMapper.update(orders);
     }
@@ -213,6 +232,12 @@ public class OrdersServiceImpl implements OrdersService {
 
         Orders orders = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
+        orders.setEstimatedDeliveryTime(ordersSubmitDTO.getEstimatedDeliveryTime());
+        orders.setAddressBookId(addressBook.getId());
+        orders.setAddress(addressBook.getDetail());
+        orders.setConsignee(addressBook.getConsignee());
+        orders.setPayMethod(ordersSubmitDTO.getPayMethod());
+        orders.setRemark(ordersSubmitDTO.getRemark());
         orders.setOrderTime(LocalDateTime.now());
         orders.setPayStatus(Orders.UN_PAID);
         orders.setStatus(Orders.PENDING_PAYMENT);

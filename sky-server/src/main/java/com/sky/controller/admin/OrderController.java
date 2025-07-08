@@ -39,7 +39,7 @@ public class OrderController {
     @GetMapping("/conditionSearch")
     public Result<PageResult> page(OrdersPageQueryDTO ordersPageQueryDTO) {
         log.info("分页查询订单列表: {}", ordersPageQueryDTO);
-        PageResult<Orders> ordersList = ordersService.page(ordersPageQueryDTO);
+        PageResult<OrderVO> ordersList = ordersService.page(ordersPageQueryDTO);
         return Result.success(ordersList);
     }
 

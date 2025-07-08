@@ -27,7 +27,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Slf4j
-@RestController
+@RestController("adminSetmealController")
 @RequestMapping("/admin/setmeal")
 public class SetmealController {
 

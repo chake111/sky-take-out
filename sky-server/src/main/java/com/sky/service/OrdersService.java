@@ -28,7 +28,15 @@ public interface OrdersService {
      * @param ordersPageQueryDTO
      * @return
      */
-    PageResult<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO);
+    PageResult<OrderVO> page(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 分页查询订单
+     *
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult<Orders> pageWithUserId(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据订单ID查询订单详情
@@ -110,10 +118,4 @@ public interface OrdersService {
      * @param id
      */
     void repetition(Long id);
-
-    /**
-     * 根据订单ID查询订单详情
-     * @param id
-     * @return
-     */
 }

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  * @Version 1.0
  */
 @Slf4j
-@RestController
+@RestController("userOrderController")
 @RequestMapping("/user/order")
 public class OrderController {
 
@@ -72,7 +72,7 @@ public class OrderController {
     @GetMapping("/historyOrders")
     public Result<PageResult> page(OrdersPageQueryDTO ordersPageQueryDTO) {
         log.info("历史订单查询：{}", ordersPageQueryDTO);
-        PageResult<Orders> pageResult = ordersService.page(ordersPageQueryDTO);
+        PageResult<Orders> pageResult = ordersService.pageWithUserId(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
 

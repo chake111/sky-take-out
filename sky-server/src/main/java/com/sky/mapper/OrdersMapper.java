@@ -27,7 +27,7 @@ public interface OrdersMapper {
      * @param ordersPageQueryDTO
      * @return
      */
-    List<Orders> list(OrdersPageQueryDTO ordersPageQueryDTO);
+    List<OrderVO> list(OrdersPageQueryDTO ordersPageQueryDTO);
 
     /**
      * 根据id查询订单

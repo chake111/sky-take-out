@@ -44,4 +44,9 @@ public class OrderDetail implements Serializable {
 
     //图片
     private String image;
+
+    @Override
+    public String toString() {
+        return "菜品：" + name + " 数量：" + number + " 金额：" + amount;
+    }
 }

@@ -29,7 +29,7 @@ import java.util.Set;
  * @Version 1.0
  */
 @Slf4j
-@RestController
+@RestController("adminDishController")
 @RequestMapping("/admin/dish")
 public class DishController {
 
