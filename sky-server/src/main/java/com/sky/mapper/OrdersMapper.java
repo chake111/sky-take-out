@@ -5,6 +5,7 @@ import com.sky.entity.Orders;
 import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -64,4 +65,13 @@ public interface OrdersMapper {
      */
     @Select("select * from orders where number = #{orderNumber}")
     Orders getByNumber(String orderNumber);
+
+    /**
+     * 更新订单状态
+     * @param orders
+     */
+    @Update("update orders " +
+            "set status = #{status},pay_status = #{payStatus},checkout_time = #{checkoutTime} " +
+            "where number = #{number}")
+    void updateStatus(Orders orders);
 }

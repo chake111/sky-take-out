@@ -104,4 +104,16 @@ public interface OrdersService {
      * @param outTradeNo
      */
     void paySuccess(String outTradeNo);
+
+    /**
+     * 再来一单
+     * @param id
+     */
+    void repetition(Long id);
+
+    /**
+     * 根据订单ID查询订单详情
+     * @param id
+     * @return
+     */
 }

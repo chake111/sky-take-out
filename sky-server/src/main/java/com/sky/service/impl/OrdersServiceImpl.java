@@ -19,6 +19,7 @@ import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author chake
@@ -39,6 +41,7 @@ import java.util.List;
  * @Create 2025/7/1 16:55
  * @Version 1.0
  */
+@Slf4j
 @Service
 public class OrdersServiceImpl implements OrdersService {
 
@@ -69,9 +72,11 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public PageResult<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO) {
+        Long userId = BaseContext.getCurrentId();
+        ordersPageQueryDTO.setUserId(userId);
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
-        List<Orders> orderVOList = ordersMapper.list(ordersPageQueryDTO);
-        Page<Orders> page = (Page<Orders>) orderVOList;
+        List<Orders> ordersList = ordersMapper.list(ordersPageQueryDTO);
+        Page<Orders> page = (Page<Orders>) ordersList;
         return new PageResult(page.getTotal(), page.getResult());
     }
 
@@ -247,20 +252,33 @@ public class OrdersServiceImpl implements OrdersService {
         User user = userMapper.getById(userId);
 
         //调用微信支付接口，生成预支付交易单
-        JSONObject jsonObject = weChatPayUtil.pay(
-                ordersPaymentDTO.getOrderNumber(), //商户订单号
-                new BigDecimal(0.01), //支付金额，单位 元
-                "苍穹外卖订单", //商品描述
-                user.getOpenid() //微信用户的openid
-        );
+//        JSONObject jsonObject = weChatPayUtil.pay(
+//                ordersPaymentDTO.getOrderNumber(), //商户订单号
+//                new BigDecimal(0.01), //支付金额，单位 元
+//                "苍穹外卖订单", //商品描述
+//                user.getOpenid() //微信用户的openid
+//        );
+//
+//        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+//            throw new OrderBusinessException("该订单已支付");
+//        }
 
-        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
-            throw new OrderBusinessException("该订单已支付");
-        }
-
-        OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", "ORDERPAID");
+        OrderPaymentVO vo = JSONObject.toJavaObject(jsonObject, OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
-
+        Integer OrderPaidStatus = Orders.PAID;
+        Integer OrderStatus = Orders.TO_BE_CONFIRMED;
+        LocalDateTime CheckoutTime = LocalDateTime.now();
+        String orderNumber = ordersPaymentDTO.getOrderNumber();
+        log.info("订单号：" + orderNumber + "支付成功");
+        Orders orders = Orders.builder()
+                .payStatus(OrderPaidStatus)
+                .status(OrderStatus)
+                .checkoutTime(CheckoutTime)
+                .number(orderNumber)
+                .build();
+        ordersMapper.updateStatus(orders);
         return vo;
     }
 
@@ -285,4 +303,28 @@ public class OrdersServiceImpl implements OrdersService {
         ordersMapper.update(orders);
     }
 
+    /**
+     * 再来一单
+     *
+     * @param id
+     */
+    @Override
+    public void repetition(Long id) {
+        //根据id查询到原来订单中菜品信息
+        List<OrderDetail> orderDetailList = orderDetailMapper.listByOrderId(id);
+        //查询当前用户id
+        Long userId = BaseContext.getCurrentId();
+        // 将订单详情对象转换为购物车对象
+        List<ShoppingCart> shoppingCartList =orderDetailList.stream().map(x->{
+            //这里的x代表的是  orderDetailList集合中每一个元素
+            ShoppingCart shoppingCart=new ShoppingCart();
+            // 将原订单详情里面的菜品信息重新复制到购物车对象中
+            BeanUtils.copyProperties(x,shoppingCart,"id");
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            return shoppingCart;
+        }).collect(Collectors.toList());//Collectors.toList()来收集Stream中映射后的所有ShoppingCart对象到一个新的列表中
+        //将购物车对象批量添加到数据库
+        shoppingCartMapper.insertBatch(shoppingCartList);
+    }
 }

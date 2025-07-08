@@ -31,4 +31,12 @@ public interface OrderDetailMapper {
      * @param orderDetailList
      */
     void insertBatch(ArrayList<OrderDetail> orderDetailList);
+
+    /**
+     * 根据id查询订单详情
+     * @param id
+     * @return
+     */
+    @Select("select * from order_detail where id = #{id}")
+    OrderDetail getById(Long id);
 }
