@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -18,6 +19,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.webSocket.WebSocketServer;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +67,8 @@ public class OrdersServiceImpl implements OrdersService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     /**
      * 分页查询订单
@@ -82,6 +88,7 @@ public class OrdersServiceImpl implements OrdersService {
         Page<OrderVO> page = (Page<OrderVO>) orderVOList;
         return new PageResult(page.getTotal(), page.getResult());
     }
+
     /**
      * 分页查询订单
      *
@@ -304,6 +311,7 @@ public class OrdersServiceImpl implements OrdersService {
                 .number(orderNumber)
                 .build();
         ordersMapper.updateStatus(orders);
+        paySuccess(orderNumber);
         return vo;
     }
 
@@ -313,7 +321,6 @@ public class OrdersServiceImpl implements OrdersService {
      * @param outTradeNo
      */
     public void paySuccess(String outTradeNo) {
-
         // 根据订单号查询订单
         Orders ordersDB = ordersMapper.getByNumber(outTradeNo);
 
@@ -324,6 +331,15 @@ public class OrdersServiceImpl implements OrdersService {
                 .payStatus(Orders.PAID)
                 .checkoutTime(LocalDateTime.now())
                 .build();
+
+        // 发送websocket消息
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号：" + outTradeNo);
+
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
 
         ordersMapper.update(orders);
     }
@@ -340,11 +356,11 @@ public class OrdersServiceImpl implements OrdersService {
         //查询当前用户id
         Long userId = BaseContext.getCurrentId();
         // 将订单详情对象转换为购物车对象
-        List<ShoppingCart> shoppingCartList =orderDetailList.stream().map(x->{
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
             //这里的x代表的是  orderDetailList集合中每一个元素
-            ShoppingCart shoppingCart=new ShoppingCart();
+            ShoppingCart shoppingCart = new ShoppingCart();
             // 将原订单详情里面的菜品信息重新复制到购物车对象中
-            BeanUtils.copyProperties(x,shoppingCart,"id");
+            BeanUtils.copyProperties(x, shoppingCart, "id");
             shoppingCart.setUserId(userId);
             shoppingCart.setCreateTime(LocalDateTime.now());
             return shoppingCart;
