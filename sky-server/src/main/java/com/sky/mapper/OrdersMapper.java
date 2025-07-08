@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chake
@@ -55,13 +56,15 @@ public interface OrdersMapper {
     Integer statistics(Integer status);
 
     /**
-     *  新增订单
+     * 新增订单
+     *
      * @param orders
      */
     void insert(Orders orders);
 
     /**
      * 根据订单号查询订单
+     *
      * @param orderNumber
      */
     @Select("select * from orders where number = #{orderNumber}")
@@ -69,6 +72,7 @@ public interface OrdersMapper {
 
     /**
      * 更新订单状态
+     *
      * @param orders
      */
     @Update("update orders " +
@@ -78,9 +82,18 @@ public interface OrdersMapper {
 
     /**
      * 根据订单状态和下单时间查询订单
+     *
      * @param status
      * @param orderTime
      */
     @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
+
+    /**
+     * 根据订单状态和支付状态查询订单
+     *
+     * @param map 订单状态和支付状态
+     * @return
+     */
+    Double sumByMap(Map<String, Object> map);
 }

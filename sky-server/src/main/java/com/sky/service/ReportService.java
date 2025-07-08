@@ -1,6 +1,7 @@
 package com.sky.service;
 
 import com.sky.vo.SalesTop10ReportVO;
+import com.sky.vo.TurnoverReportVO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,11 +15,14 @@ import java.time.LocalDateTime;
  * @Version 1.0
  */
 public interface ReportService {
+
+
     /**
-     * 获取销售Top10
+     * 获取营业额统计
+     *
      * @param begin
      * @param end
      * @return
      */
-    SalesTop10ReportVO getTop10(LocalDate begin, LocalDate end);
+    TurnoverReportVO getTurnoverStatistics(LocalDate begin, LocalDate end);
 }
