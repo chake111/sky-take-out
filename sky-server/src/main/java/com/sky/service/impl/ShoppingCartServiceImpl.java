@@ -89,9 +89,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartList;
     }
 
+    /**
+     * 清空购物车
+     */
     @Override
     public void cleanShoppingCart() {
         Long userId = BaseContext.getCurrentId();
         shoppingCartMapper.deleteByUserId(userId);
+    }
+
+    /**
+     * 减少购物车数量
+     *
+     * @param shoppingCartDTO
+     */
+    @Override
+    public void sub(ShoppingCartDTO shoppingCartDTO) {
+        Long userId = BaseContext.getCurrentId();
+        shoppingCartDTO.setUserId(userId);
+        ShoppingCart shoppingCart = shoppingCartMapper.get(shoppingCartDTO);
+        shoppingCart.setNumber(shoppingCart.getNumber() - 1);
+        if (shoppingCart.getNumber() <= 0) {
+            shoppingCartMapper.delete(shoppingCart);
+        } else {
+            shoppingCartMapper.updateNumberById(shoppingCart);
+        }
     }
 }
