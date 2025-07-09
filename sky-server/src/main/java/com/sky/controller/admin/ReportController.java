@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 
 /**
@@ -96,5 +98,18 @@ public class ReportController {
         log.info("统计销售Top10, begin:{}, end:{}", begin, end);
         SalesTop10ReportVO salesTop10ReportVO = reportService.getTop10(begin, end);
         return Result.success(salesTop10ReportVO);
+    }
+
+    /**
+     * 导出报表
+     * @param response
+     */
+    @GetMapping("/export")
+    public void export(HttpServletResponse response) {
+        try {
+            reportService.exportBusinessData(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
