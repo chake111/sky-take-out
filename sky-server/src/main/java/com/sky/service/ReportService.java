@@ -45,4 +45,13 @@ public interface ReportService {
      * @return
      */
     OrderReportVO getOrdersStatistics(LocalDate begin, LocalDate end);
+
+    /**
+     * 销售排行榜 top10
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    SalesTop10ReportVO getTop10(LocalDate begin, LocalDate end);
 }
